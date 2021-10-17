@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>W2UI Demo: layout/4</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.min.css" />
+	<script src="https://d3js.org/d3.v6.min.js"></script>
+	<script type='text/javascript' > 
+		var objs;
+		var data;
+	</script>
+</head>
+<body>
+
+<div id="layout" style="width: 100%; height: 800px;"></div>
+
+<div style="height: 20px;"></div>
+
+<span style="display: inline-block; width: 50px;"> Top: </span>
+<button class="w2ui-btn" onclick="w2ui['layout'].html('left', 'This is some content set manually')">Set Content</button>
+<button class="w2ui-btn" onclick="w2ui['layout'].load('left', 'data/content1.html')">Load Content 1</button>
+<button class="w2ui-btn" onclick="w2ui['layout'].load('left', 'data/content2.html')">Load Content 2</button>
+
+<div style="height: 10px;"></div>
+
+
+
+<script type="text/javascript">
+$(function () {
+    var pstyle = 'border: 1px solid #efefef; padding: 5px;';
+    $('#layout').w2layout({
+        name: 'layout',
+        panels: [
+            { type: 'top', size: 50, style: pstyle, content: 'top', resizable: true },
+            { type: 'left', style: pstyle, content: 'left', resizable: true },
+            { type: 'main', size: 300, style: pstyle, content: 'main' },
+			{ type: 'right', style: pstyle, content: 'right'}
+        ]
+    });
+	
+	$().w2sidebar({
+		name: 'navigation',
+		img: null,
+		nodes: [],
+	});
+	
+	
+	
+	w2ui['layout'].load('main', 'map.html');
+	w2ui['layout'].html('left', w2ui['navigation']);
+});
+
+</script>
+
+</body>
+</html>
