@@ -13,12 +13,13 @@ randomLocation = () => ({x: Math.round(Math.random() * (4 - -4) + -4), y: Math.r
 cities = dataRaw.map(a => a.Location).reduce(reducer, new Set())
 citiesWithLocation = Array.from(cities).map(c => ({name: c, location: randomLocation()}))
 
-
 var data = cityLocations.map(c => ({city: c, amount: 0}))
 dataRaw.forEach(s => {
 	const city = citiesWithCount.find(c => c.city.name == s.Location)
 	city.amount = city.amount + 1
 })
+
+loadLayout()
 
 
 var z = d3.scaleOrdinal()
@@ -99,6 +100,7 @@ gDot.selectAll("path")
 	.attr("data", d => (d))
 	.attr("r", d => d.amount * 2)
 	.attr("text", d => d.city.name)
+	.attr("id", d => d.city.name)
 
 const pointsLabels = gDot.append("g")
 .selectAll("pointLabelText")
@@ -126,7 +128,7 @@ function zoomed({transform}) {
 	gy.call(yAxis, zy);
 	gGrid.call(grid, zx, zy);
 }
-
+console.log(svg)
 chart = Object.assign(svg.node(), {
 reset() {
 	svg.transition()
