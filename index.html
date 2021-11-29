@@ -7,11 +7,8 @@
     <link rel="stylesheet" type="text/css" href="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.min.css" />
 	<script src="https://d3js.org/d3.v6.min.js"></script>
     <script type="text/javascript">
-        var data;
+        var sourceData;
         var dataRaw;
-        var cities;
-        var cityLocations;
-        var chart;
         var costPerMile = 10;
         var initialCost = 2;
         var mph = 12;
@@ -34,54 +31,17 @@
     }
     </style>
     
-
-<script type="text/javascript" src="./app/web.js"></script>
-<script type="module" src="./app/map.js"></script>
 <script type="text/javascript">
     var pstyle = 'border: 1px solid #efefef; padding: 5px;';
     $('#layout').w2layout({
         name: 'layout',
         panels: [
             { type: 'top', size: 50, style: pstyle, content: 'top', resizable: true },
-            { type: 'left', style: pstyle, content: 'left', resizable: true },
+            { type: 'left', size: 400, style: pstyle, content: 'left'},
             { type: 'main', size: 300, style: pstyle, html: `<div id='map'></div>`},
 			{ type: 'right', style: pstyle, content: 'right'}
         ]
     });
-
-    function loadLayout() {
-    console.log(cities) //need to have some sort of load order
-    $().w2form({
-		name: 'transportationCalc',
-        fields: [
-            { field: 'start', type: 'list', options: {items: Array.from(cities)}},
-            { field: 'end', type: 'list', options: {items: Array.from(cities)}}
-        ],
-        actions: {
-            custom: {
-                text: 'Calculate',
-                class: 'w2ui-btn-green',
-                style: 'text-transform: uppercase',
-                onClick(event) {
-                    calculateCost()
-                }
-            }
-        },
-        onChange(event) {
-            var prevVal = event.value_previous;
-            var newVal = event.value_new;
-
-            if (prevVal) {
-                var circle = document.getElementById(prevVal.id)
-                circle.setAttribute('fill', 'red')
-            }
-
-            if (newVal) {
-                var circle = document.getElementById(newVal.id)
-                circle.setAttribute('fill', 'green')
-            }
-        }
-	});
 
     function calculateCost() {
         var start = cityLocations.find(c => c.name == w2ui['transportationCalc'].getValue('start').id)
@@ -96,12 +56,17 @@
         console.log(cost)
     }
 
-    w2ui['layout'].html('left', w2ui['transportationCalc'])
-    w2ui['transportationCalc'].set('start', {items: Array.from(cities)})
-    w2ui['transportationCalc'].set('end', {items: Array.from(cities)})
-}
-    // w2ui['transportationCalc'].set('end', {items: Array.from(cities)})
-    // w2ui['transportationCalc'].refresh()
+    function loadLayout() { 
+        console.trace()     
+        console.log(Array.from(sourceData.cities.values()))
+        w2ui['layout'].load('left', 'sidebar.html')
+    }
 </script>
+
+<script type="text/javascript" src="./app/model.js"></script>
+<script type="text/javascript" src="./app/web.js"></script>
+<script type="text/javascript" src="./app/map.js"></script>
+<script type="text/javascript" src="./app/main.js"></script>
+
 </body>
 </html>
