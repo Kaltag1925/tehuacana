@@ -30,9 +30,9 @@
         margin-left: -90px
     }
     </style>
-    
+
 <script type="text/javascript">
-    var pstyle = 'border: 1px solid #efefef; padding: 5px;';
+     var pstyle = 'border: 1px solid #efefef; padding: 5px;';
     $('#layout').w2layout({
         name: 'layout',
         panels: [
@@ -42,18 +42,28 @@
 			{ type: 'right', style: pstyle, content: 'right'}
         ]
     });
+</script>
+
+<script type="text/javascript" src="./app/model.js"></script>
+<script type="text/javascript" src="./app/web.js"></script>
+<script type="text/javascript" src="./app/map.js"></script>
+<script type="text/javascript" src="./app/main.js"></script>
+
+    
+<script type="text/javascript">
 
     function calculateCost() {
-        var start = cityLocations.find(c => c.name == w2ui['transportationCalc'].getValue('start').id)
-        var end = cityLocations.find(c => c.name == w2ui['transportationCalc'].getValue('end').id)
+        var start = cityValues().find(c => c.name == w2ui['transportationCalc'].getValue('start').id)// THis is dumb use the ID idiet
+        var end = cityValues().find(c => c.name == w2ui['transportationCalc'].getValue('end').id)
 
-        var x1 = start.location.x;
-        var y1 = start.location.y;
-        var x2 = end.location.x;
-        var y2 = end.location.y;
+        var x1 = start.x;
+        var y1 = start.y;
+        var x2 = end.x;
+        var y2 = end.y;
 
         var cost = Math.pow((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1), 1/2) * costPerMile + initialCost
-        console.log(cost)
+        
+        plotPath(start, end)
     }
 
     function loadLayout() { 
@@ -62,11 +72,5 @@
         w2ui['layout'].load('left', 'sidebar.html')
     }
 </script>
-
-<script type="text/javascript" src="./app/model.js"></script>
-<script type="text/javascript" src="./app/web.js"></script>
-<script type="text/javascript" src="./app/map.js"></script>
-<script type="text/javascript" src="./app/main.js"></script>
-
 </body>
 </html>

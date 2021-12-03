@@ -88,11 +88,13 @@ const image = svg.append("svg:image")
 
 const gGrid = svg.append("g");
 
+const gLines = svg.append("g");
+
 const gDot = svg.append("g")
 	.attr("fill", "red")
 	.attr("stroke-linecap", "round");
 
-const pointsLabels = gDot.append("g")
+const gLabel = gDot.append("g")
 
 const gx = svg.append("g");
 
@@ -107,6 +109,7 @@ function zoomed({transform}) {
 	gGrid.call(grid, zx, zy);
 	console.log(transform)
 	image.attr("transform", `translate(${transform.x} ${transform.y})scale(${transform.k})`)
+	gLines.attr("transform", `translate(${transform.x} ${transform.y})scale(${transform.k})`)
 }
 
 function loadVisuals() {
@@ -129,12 +132,12 @@ function loadVisuals() {
 		.attr("stroke", "grey")
 		.attr("stroke-width", 1)
 		.attr("data", d => (d))
-		.attr("r", d => 10)//d.amount * 2)
+		.attr("r", d => 50)//d.amount * 2)
 		.attr("text", d => d.name)
 		.attr("id", d => d.name)
 		
 	
-	pointsLabels.selectAll("pointLabelText")
+	gLabel.selectAll("pointLabelText")
 	.data(Array.from(sourceData.cities.values()))
 	.join("text")
 		.attr("opacity", 1)
@@ -157,3 +160,20 @@ function loadVisuals() {
 	}
 	});
 }
+
+function plotPath(start, end) {
+	var x1 = start.x;
+	var y1 = start.y;
+	var x2 = end.x;
+	var y2 = end.y;
+
+	gLines.append("line")
+		.attr("stroke", "green")
+		.attr("x1", x(x1))
+		.attr("y1", x(y1))
+		.attr("x2", x(x2))
+		.attr("y2", x(y2))
+		.attr("stroke-dasharray", "60, 20")
+		.attr("stroke-width", 20)
+}
+// 19th century texas geography railroad

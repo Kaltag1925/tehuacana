@@ -49,3 +49,11 @@ function loadCities(data) {
     console.log(cits)
     sourceData.cities = cits
 }
+
+function cityValues() {
+    return Array.from(sourceData.cities.values())
+}
+
+function studentValues() {
+    return Array.from(sourceData.students.values())
+}
