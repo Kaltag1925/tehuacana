@@ -54,7 +54,7 @@
 
     function calculateCost() {
         var start = cityValues().find(c => c.name == w2ui['transportationCalc'].getValue('start').id)// THis is dumb use the ID idiet
-        var end = cityValues().find(c => c.name == w2ui['transportationCalc'].getValue('end').id)
+        var end = cityValues().find(c => c.name == w2ui['transportationCalc'].getValue('end').id) //need to get the state in here somehow?
 
         var x1 = start.x;
         var y1 = start.y;

@@ -1,11 +1,12 @@
 function loadData(){
     // Student :: ([ID], [Name, CityID]
-    sourceData = {students: new Map(), cities: new Map()}
+    sourceData = {students: new Map(), cities: new Map(), connections: new Map()}
     d3.csv("data.csv").then(d => loadStudents(d)).then(
-        d3.csv("cityLocations.csv").then(d => loadCities(d)).then(d =>
+        d3.csv("cityLocations.csv").then(d => loadCities(d)).then(
+            d3.json("stations.json").then(d => loadLines(d)).then(d =>
             loadLayout()).then(d =>
                 loadMap()
-            ))
+            )))
 }
 
 function buildStudent(student) {
@@ -44,10 +45,40 @@ function cityID(city) {
 
 function loadCities(data) {
     var cits = new Map();
-    console.log(data)
-    data.forEach(c => cits.set(cityID(c), buildCity(c)))
+    data.forEach(c => {
+        const id = cityID(c)
+        const obj = buildCity(c)
+        if (!cits.get(id)) {
+            cits.set(id, obj)
+        } else {
+            console.log(`WARNING There exists duplicate cities in data ${c.Name}, ${c.State}`)
+            return
+        }
+    })
     console.log(cits)
     sourceData.cities = cits
+}
+
+function loadLines(data) {
+    var lns = new Map();
+    console.log(data)
+    data.forEach(c => {
+        const id = c.id
+        const city = sourceData.cities.get(id)
+        if (city == null) {
+            console.log(`WARNING Station ${id} does not have a city associated with it`)
+            return
+        }
+        const obj = {cityID: id, connections: c.connections}
+        if (!lns.get(id)) {
+            lns.set(id, obj)
+        } else {
+            console.log(`WARNING There exists duplicate connections in data`)
+            return
+        }
+    }) 
+
+    sourceData.connections = lns
 }
 
 function cityValues() {
@@ -57,3 +88,18 @@ function cityValues() {
 function studentValues() {
     return Array.from(sourceData.students.values())
 }
+
+function connectionValues() {
+    return Array.from(sourceData.connections.values())
+}
+
+// function lineMappingData() {
+//     var start = sourceData.cities.get("AustinTexas") // this is lazy but w/e
+//     var lines = [[{x: start.x, y: start.y}]]
+//     var toExplore = start.connections
+//     var prev = start
+//     while (toExplore.length() > 0) {
+//         var n = toExplore.pop()
+        
+//     }
+// }

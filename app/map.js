@@ -27,6 +27,7 @@ var x,y
 function loadMap() {
 	loadRanges()
 	loadVisuals()
+	drawRailRoads()
 	console.log("ran")
 }
 
@@ -107,7 +108,6 @@ function zoomed({transform}) {
 	gx.call(xAxis, zx);
 	gy.call(yAxis, zy);
 	gGrid.call(grid, zx, zy);
-	console.log(transform)
 	image.attr("transform", `translate(${transform.x} ${transform.y})scale(${transform.k})`)
 	gLines.attr("transform", `translate(${transform.x} ${transform.y})scale(${transform.k})`)
 }
@@ -170,10 +170,54 @@ function plotPath(start, end) {
 	gLines.append("line")
 		.attr("stroke", "green")
 		.attr("x1", x(x1))
-		.attr("y1", x(y1))
+		.attr("y1", y(y1))
 		.attr("x2", x(x2))
-		.attr("y2", x(y2))
+		.attr("y2", y(y2))
 		.attr("stroke-dasharray", "60, 20")
 		.attr("stroke-width", 20)
+}
+
+function drawRailRoads() {
+	// var start = sourceData.cities.get("AustinTexas") // this is lazy but w/e
+    // var toExplore = start.connections
+	// var explored = new Set(start.id)
+    // var prev = start
+    // while (toExplore.length() > 0) {
+    //     var n = toExplore.pop()
+	// 	if (!explored.get(n.id)) {
+	// 		explored.add(n.id)
+	// 		n.connections.forEach(c => toExplore.push(c))
+	// 	}
+	// }
+
+	var connections = connectionValues().map(station => station.connections.map(c => cityToCityLine(sourceData.cities.get(station.cityID), sourceData.cities.get(c)))).flat()
+	console.log(connections)
+	gLines.selectAll("railLines")
+		.data(connections)
+		.join("line")
+		.attr("stroke", "blue")
+		.attr("x1", d => x(d.x1))
+		.attr("y1", d => y(d.y1))
+		.attr("x2", d => x(d.x2))
+		.attr("y2", d => y(d.y2))
+		.attr("stroke-linecap", "round")
+		.attr("stroke-width", 20)
+	console.log("drawn")
+}
+
+function cityToCityLine(c1, c2) {
+	var x2, y2
+	if (c2 == null) {
+		x2 = 0
+		y2 = 0
+	} else {
+		x2 = c2.x
+		y2 = c2.y
+	}
+
+	return {x1: c1.x,
+		y1: c1.y,
+		x2: x2,
+		y2: y2}
 }
 // 19th century texas geography railroad
