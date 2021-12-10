@@ -27,7 +27,7 @@ var x,y
 function loadMap() {
 	loadRanges()
 	loadVisuals()
-	drawRailRoads()
+	// drawRailRoads()
 	console.log("ran")
 }
 
@@ -135,6 +135,11 @@ function loadVisuals() {
 		.attr("r", d => 50)//d.amount * 2)
 		.attr("text", d => d.name)
 		.attr("id", d => d.name)
+		.on('click', function(d,i) {
+			plotPath(i, sourceData.cities.get("TehuacanaTexas"))
+			displayRouteInfo(i, sourceData.cities.get("TehuacanaTexas"))
+		})
+		.style('cursor', 'pointer')
 		
 	
 	gLabel.selectAll("pointLabelText")
@@ -177,19 +182,37 @@ function plotPath(start, end) {
 		.attr("stroke-width", 20)
 }
 
-function drawRailRoads() {
-	// var start = sourceData.cities.get("AustinTexas") // this is lazy but w/e
-    // var toExplore = start.connections
-	// var explored = new Set(start.id)
-    // var prev = start
-    // while (toExplore.length() > 0) {
-    //     var n = toExplore.pop()
-	// 	if (!explored.get(n.id)) {
-	// 		explored.add(n.id)
-	// 		n.connections.forEach(c => toExplore.push(c))
-	// 	}
-	// }
+function path(start, finish) {
+    var toExplore = [start]
+	var explored = new Set()
+	var map = new Map()
+	map.set(start.cityID, null)
+    while (toExplore.length > 0) {
+        var n = toExplore.pop()
+		if (n != null && !explored.has(n.cityID)) {
+			explored.add(n.cityID)
+			n.connections.forEach(c => { 
+				if (!explored.has(c)) {
+					toExplore.push(sourceData.connections.get(c));
+					map.set(c, n.cityID)
+				}
+			}) //crash on cityID not found
+		}
+	}
+	
+	var path = []
+	var cur = finish.cityID
+	while (map.get(cur) != null) {
+		path.push(cur)
+		cur = map.get(cur)
+		console.log(cur)
+	}
+	path.push(cur)
+	
+	path.map(id => sourceData.cities.get(id))
+}
 
+function drawRailRoads() {
 	var connections = connectionValues().map(station => station.connections.map(c => cityToCityLine(sourceData.cities.get(station.cityID), sourceData.cities.get(c)))).flat()
 	console.log(connections)
 	gLines.selectAll("railLines")
@@ -219,5 +242,49 @@ function cityToCityLine(c1, c2) {
 		y1: c1.y,
 		x2: x2,
 		y2: y2}
+}
+
+function displayRouteInfo(start, end) {
+	var box = gLines.append("g").attr("transform", `translate(${start.x},${start.y})`)
+
+	box.append("rect")
+		.attr("width", 100)
+		.attr("height", 100)
+		.attr("fill", "white")
+
+		box
+		.append("foreignObject")
+		.attr('width', 150)
+		.attr('height', 100)
+		.attr("dy", ".35em")
+		.append("xhtml:body")
+    .html(`<div style="width: 100px;">
+			Estimated time by buggy (6mph): ${calculateBuggyRoute(start, end)}
+			Estimated time by railroad (24mph): ${calculateRailroadRoute(start, end)}
+		</div>`)
+}
+
+function calculateBuggyRoute(start, end) {
+	var x1 = start.x;
+	var y1 = start.y;
+	var x2 = end.x;
+	var y2 = end.y;
+
+	var max = x2-x1 + y2-y1
+	var min = Math.pow(Math.pow(x2-x1) + Math.pow(y2-y1), 0.5)
+
+	return `Maximum: ${max/6} | Minimum: ${min/6}`
+}
+
+function calculateRailroadRoute(start, end) {
+	var x1 = start.x;
+	var y1 = start.y;
+	var x2 = end.x;
+	var y2 = end.y;
+
+	var max = x2-x1 + y2-y1
+	var min = Math.pow(Math.pow(x2-x1) + Math.pow(y2-y1), 0.5)
+
+	return `Maximum: ${max/24} | Minimum: ${min/24}`
 }
 // 19th century texas geography railroad

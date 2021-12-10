@@ -37,7 +37,7 @@
         name: 'layout',
         panels: [
             { type: 'top', size: 50, style: pstyle, content: 'top', resizable: true },
-            { type: 'left', size: 400, style: pstyle, content: 'left'},
+           // { type: 'left', size: 400, style: pstyle, content: 'left'},
             { type: 'main', size: 300, style: pstyle, html: `<div id='map'></div>`},
 			{ type: 'right', style: pstyle, content: 'right'}
         ]
@@ -69,7 +69,7 @@
     function loadLayout() { 
         console.trace()     
         console.log(Array.from(sourceData.cities.values()))
-        w2ui['layout'].load('left', 'sidebar.html')
+       // w2ui['layout'].load('left', 'sidebar.html')
     }
 </script>
 </body>
